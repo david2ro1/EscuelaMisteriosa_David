@@ -1,0 +1,76 @@
+body {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    background: #111;
+    color: #fff;
+  }
+  
+  /* Pantalla de inicio */
+  #startScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: 0 20px;
+  }
+  
+  #gameTitle {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    color: #e63946;
+    letter-spacing: 5px;
+    animation: pulse 3s infinite;
+  }
+  
+  .description {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    max-width: 600px;
+    color: #ccc;
+  }
+  
+  /* Boton de inicio */
+  #startButton {
+    padding: 15px 30px;
+    background: #e63946;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Courier New', monospace;
+  }
+  
+  #startButton:hover {
+    background: #d62828;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.8);
+  }
+  
+    /* Instrucciones del juego*/
+  #instructions {
+    margin-top: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    border: 1px solid #333;
+  }
+  
+  #instructions h2 {
+    color: #e63946;
+    margin-top: 0;
+  }
+  
+  #instructions ul {
+    text-align: left;
+    line-height: 1.6;
+  }
+  
+  #gameContainer {
+    position: relative;
+    height: 100vh;
+  }
