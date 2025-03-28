@@ -51,7 +51,7 @@ const player = {
   image: new Image()
 };
 
-player.image.src = 'empanadaCute.png';
+player.image.src = 'https://images.vexels.com/media/users/3/230807/isolated/preview/246ceb3bec0f1c1658a4f5744ad65fbb-cute-empanada-cartoon.png?w=360';
 
 // Para detectar teclas presionadas
 const keys = {};
