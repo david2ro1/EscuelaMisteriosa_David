@@ -46,9 +46,12 @@ let gameActive = true; // Si el juego está activo
 const player = {
   x: 150,
   y: 150,
-  size: 20,
-  speed: 5
+  size: 32,
+  speed: 5,
+  image: new Image()
 };
+
+player.image.src = 'empanadaCute.png';
 
 // Para detectar teclas presionadas
 const keys = {};
@@ -71,7 +74,7 @@ function updateTimer() {
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
   const minutes = Math.floor(elapsed / 60);
   const seconds = elapsed % 60;
-  document.getElementById('time').textContent = 
+  document.getElementById('time').textContent =
     `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
@@ -118,7 +121,7 @@ function handleMovement() {
       endGame(true);
     }
   }
-  
+
   // Mover fantasma y revisar si te atrapó
   moveGhost();
   const ghost = ghosts[currentHallway];
@@ -131,24 +134,24 @@ function handleMovement() {
 function moveGhost() {
   const ghost = ghosts[currentHallway];
   const hall = hallways[currentHallway];
-  
+
   // Calcula dirección hacia el jugador
   const dx = player.x - ghost.x;
   const dy = player.y - ghost.y;
-  
+
   // Calcula distancia
   const distance = Math.sqrt(dx * dx + dy * dy);
-  
+
   // Solo mueve si no está muy cerca
   if (distance > 2) {
     // Normaliza la dirección
     const dirX = dx / distance;
     const dirY = dy / distance;
-    
+
     // Mueve el fantasma
     ghost.x += dirX * ghost.speed;
     ghost.y += dirY * ghost.speed;
-    
+
     // Mantiene el fantasma dentro del pasillo
     if (ghost.x < hall.x) ghost.x = hall.x;
     if (ghost.x + ghost.size > hall.x + hall.width) ghost.x = hall.x + hall.width - ghost.size;
@@ -174,15 +177,15 @@ function checkCollisionCircle(player, ghost) {
   const playerCenterY = player.y + player.size / 2;
   const ghostCenterX = ghost.x + ghost.size / 2;
   const ghostCenterY = ghost.y + ghost.size / 2;
-  
+
   // Distancia entre centros
   const dx = playerCenterX - ghostCenterX;
   const dy = playerCenterY - ghostCenterY;
   const distance = Math.sqrt(dx * dx + dy * dy);
-  
+
   // Radio sumado
   const sumRadii = (player.size + ghost.size) / 2;
-  
+
   // Hay colisión si están cerca
   return distance < sumRadii * 0.8; // El 0.8 es para ser menos estricto
 }
@@ -190,11 +193,11 @@ function checkCollisionCircle(player, ghost) {
 // Cambia de pasillo
 function transitionHallway(newHall) {
   currentHallway = newHall;
-  
+
   // Posiciona al jugador en la entrada del nuevo pasillo
   const hall = hallways[newHall];
   // Esto lo hice medio a ojo, podría mejorarse
-  switch(newHall) {
+  switch (newHall) {
     case 2:
       player.x = hall.x + 20;
       player.y = hall.y + 20;
@@ -212,7 +215,7 @@ function transitionHallway(newHall) {
       player.y = hall.y + 20;
       break;
   }
-  
+
   // Aleja el fantasma del jugador
   resetGhostPosition();
 }
@@ -221,7 +224,7 @@ function transitionHallway(newHall) {
 function resetGhostPosition() {
   const ghost = ghosts[currentHallway];
   const hall = hallways[currentHallway];
-  
+
   // Busca una posición aleatoria pero lejos del jugador
   let newX, newY;
   let intentos = 0;
@@ -229,17 +232,17 @@ function resetGhostPosition() {
     // Posición aleatoria
     newX = hall.x + Math.random() * (hall.width - ghost.size);
     newY = hall.y + Math.random() * (hall.height - ghost.size);
-    
+
     // Distancia al jugador
     const dx = newX - player.x;
     const dy = newY - player.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    
+
     // Si está lejos o ya intentamos mucho, usamos esta posición
     if (distance > 150 || intentos > 10) break;
     intentos++;
   } while (true);
-  
+
   ghost.x = newX;
   ghost.y = newY;
 }
@@ -248,15 +251,15 @@ function resetGhostPosition() {
 function endGame(win) {
   gameActive = false;
   clearInterval(timerInterval);
-  
+
   const currentTime = (Date.now() - startTime) / 1000;
-  
+
   // Guarda mejor tiempo si ganaste
   if (win && currentTime < bestTime) {
     bestTime = currentTime;
     localStorage.setItem('bestTime', bestTime);
   }
-  
+
   // Pantalla final
   const endScreen = document.createElement('div');
   endScreen.id = 'endScreen';
@@ -266,11 +269,11 @@ function endGame(win) {
     <p>Mejor tiempo: ${formatTime(bestTime)}</p>
     <button id="restartButton">Volver al inicio</button>
   `;
-  
+
   document.body.appendChild(endScreen);
-  
+
   // Botón para reiniciar
-  document.getElementById('restartButton').addEventListener('click', function() {
+  document.getElementById('restartButton').addEventListener('click', function () {
     window.location.href = 'index.html';
   });
 }
@@ -286,86 +289,86 @@ function formatTime(seconds) {
 function drawGhost(ghost) {
   // Efecto de flotación
   const floatOffset = Math.sin(Date.now() / 200) * 3;
-  
+
   // Cuerpo principal
   ctx.fillStyle = ghost.color;
   ctx.beginPath();
   ctx.ellipse(
-    ghost.x + ghost.size/2, 
-    ghost.y + ghost.size/2 + floatOffset, 
-    ghost.size/2, 
-    ghost.size/1.5, 
+    ghost.x + ghost.size / 2,
+    ghost.y + ghost.size / 2 + floatOffset,
+    ghost.size / 2,
+    ghost.size / 1.5,
     0, 0, Math.PI * 2
   );
   ctx.fill();
-  
+
   // Parte inferior ondulada
   ctx.beginPath();
-  ctx.moveTo(ghost.x, ghost.y + ghost.size/1.2 + floatOffset);
-  
+  ctx.moveTo(ghost.x, ghost.y + ghost.size / 1.2 + floatOffset);
+
   // Ondas en la parte inferior
   for (let i = 0; i <= 4; i++) {
     const waveX = ghost.x + (ghost.size / 4) * i;
     const waveY = ghost.y + ghost.size + Math.sin(i + Date.now() / 300) * 5 + floatOffset;
     ctx.lineTo(waveX, waveY);
   }
-  
-  ctx.lineTo(ghost.x + ghost.size, ghost.y + ghost.size/1.2 + floatOffset);
+
+  ctx.lineTo(ghost.x + ghost.size, ghost.y + ghost.size / 1.2 + floatOffset);
   ctx.fill();
-  
+
   // Ojos blancos
   ctx.fillStyle = 'white';
   ctx.beginPath();
   ctx.ellipse(
-    ghost.x + ghost.size/3, 
-    ghost.y + ghost.size/2 + floatOffset, 
-    ghost.size/6, 
-    ghost.size/6, 
+    ghost.x + ghost.size / 3,
+    ghost.y + ghost.size / 2 + floatOffset,
+    ghost.size / 6,
+    ghost.size / 6,
     0, 0, Math.PI * 2
   );
   ctx.fill();
-  
+
   ctx.beginPath();
   ctx.ellipse(
-    ghost.x + ghost.size*2/3, 
-    ghost.y + ghost.size/2 + floatOffset, 
-    ghost.size/6, 
-    ghost.size/6, 
+    ghost.x + ghost.size * 2 / 3,
+    ghost.y + ghost.size / 2 + floatOffset,
+    ghost.size / 6,
+    ghost.size / 6,
     0, 0, Math.PI * 2
   );
   ctx.fill();
-  
+
   // Pupilas que miran al jugador
-  const playerCenterX = player.x + player.size/2;
-  const playerCenterY = player.y + player.size/2;
-  
+  const playerCenterX = player.x + player.size / 2;
+  const playerCenterY = player.y + player.size / 2;
+
   // Ángulos hacia el jugador
   const angle1 = Math.atan2(
-    playerCenterY - (ghost.y + ghost.size/2), 
-    playerCenterX - (ghost.x + ghost.size/3)
+    playerCenterY - (ghost.y + ghost.size / 2),
+    playerCenterX - (ghost.x + ghost.size / 3)
   );
-  
+
   const angle2 = Math.atan2(
-    playerCenterY - (ghost.y + ghost.size/2), 
-    playerCenterX - (ghost.x + ghost.size*2/3)
+    playerCenterY - (ghost.y + ghost.size / 2),
+    playerCenterX - (ghost.x + ghost.size * 2 / 3)
   );
-  
+
   // Tamaño y posición de las pupilas
-  const eyeRadius = ghost.size/12;
-  const maxOffset = ghost.size/12;
-  
-  const pupil1X = ghost.x + ghost.size/3 + Math.cos(angle1) * maxOffset;
-  const pupil1Y = ghost.y + ghost.size/2 + Math.sin(angle1) * maxOffset + floatOffset;
-  
-  const pupil2X = ghost.x + ghost.size*2/3 + Math.cos(angle2) * maxOffset;
-  const pupil2Y = ghost.y + ghost.size/2 + Math.sin(angle2) * maxOffset + floatOffset;
-  
+  const eyeRadius = ghost.size / 12;
+  const maxOffset = ghost.size / 12;
+
+  const pupil1X = ghost.x + ghost.size / 3 + Math.cos(angle1) * maxOffset;
+  const pupil1Y = ghost.y + ghost.size / 2 + Math.sin(angle1) * maxOffset + floatOffset;
+
+  const pupil2X = ghost.x + ghost.size * 2 / 3 + Math.cos(angle2) * maxOffset;
+  const pupil2Y = ghost.y + ghost.size / 2 + Math.sin(angle2) * maxOffset + floatOffset;
+
   // Dibujar pupilas negras
   ctx.fillStyle = 'black';
   ctx.beginPath();
   ctx.ellipse(pupil1X, pupil1Y, eyeRadius, eyeRadius, 0, 0, Math.PI * 2);
   ctx.fill();
-  
+
   ctx.beginPath();
   ctx.ellipse(pupil2X, pupil2Y, eyeRadius, eyeRadius, 0, 0, Math.PI * 2);
   ctx.fill();
@@ -375,24 +378,28 @@ function drawGhost(ghost) {
 function draw() {
   // Limpia la pantalla
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
   // Dibuja el pasillo actual
   const hall = hallways[currentHallway];
   ctx.fillStyle = '#f0f0f0';
   ctx.fillRect(hall.x, hall.y, hall.width, hall.height);
-  
+
   // Dibuja el portal (puerta roja)
   const portal = portals[currentHallway];
   ctx.fillStyle = '#e63946';
   ctx.fillRect(portal.x, portal.y, portal.width, portal.height);
-  
+
   // Dibuja el fantasma
   drawGhost(ghosts[currentHallway]);
-  
+
   // Dibuja el jugador (cuadrado negro)
-  ctx.fillStyle = '#2c3e50';
-  ctx.fillRect(player.x, player.y, player.size, player.size);
-  
+  if (player.image.complete) {
+    ctx.drawImage(player.image, player.x, player.y, player.size, player.size);
+  } else {
+    ctx.fillStyle = '#2c3e50';
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+  }
+
   // Muestra el número de pasillo
   ctx.fillStyle = 'black';
   ctx.font = '20px Arial';
@@ -402,7 +409,7 @@ function draw() {
 // Bucle principal del juego
 function gameLoop() {
   if (!gameActive) return;
-  
+
   handleMovement();
   draw();
   requestAnimationFrame(gameLoop);
